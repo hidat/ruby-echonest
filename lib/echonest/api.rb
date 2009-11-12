@@ -243,8 +243,18 @@ module Echonest
           when 'unavailable'
             analyze(:md5 => md5)
           end
-
-          sleep 5
+        block.call(response)
+      rescue Error => e
+        if e.message == 'Invalid parameter: unknown MD5 file hash'
+          upload(filename)
+          sleep 30 # wait for serverside analysis
+          get_trackinfo(method, filename, &block)
+        elsif e.message =~ /Analysis not ready/i
+          puts "Analysis not ready...waiting a minute before retry."
+          sleep 60
+          get_trackinfo(method, filename, &block)
+        else
+          raise
         end
       end
     end
