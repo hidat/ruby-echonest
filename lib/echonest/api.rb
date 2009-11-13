@@ -249,10 +249,6 @@ module Echonest
           upload(filename)
           sleep 30 # wait for serverside analysis
           get_trackinfo(method, filename, &block)
-        elsif e.message =~ /Analysis not ready/i
-          puts "Analysis not ready...waiting a minute before retry."
-          sleep 60
-          get_trackinfo(method, filename, &block)
         else
           raise
         end
