@@ -208,7 +208,7 @@ module Echonest
 
         if options.has_key?(:filename)
           filename = options.delete(:filename)
-          filetype = filename.match(/\.(mp3|au|ogg)$/)[1]
+          filetype = filename.to_s.match(/\.(mp3|au|ogg)$/)[1]
 
           open(filename) do |f|
             @api.request('track/upload',
