@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'digest/md5'
 require 'httpclient'
 require 'json'
@@ -22,6 +21,14 @@ module Echonest
 
     def track
       ApiMethods::Track.new(self)
+    end
+
+    def artist(name)
+      ApiMethods::Artist.new_from_name(self, name)
+    end
+
+    def song
+      ApiMethods::Song.new(self)
     end
 
     def build_params(params)
@@ -70,6 +77,75 @@ module Echonest
     class Base
       def initialize(api)
         @api = api
+      end
+
+      def request(*args)
+        http_method, name, params = args
+        @api.request(name, http_method, params)
+      end
+
+      class << self
+        def define_method_with_required_any(category, method_id, http_method, required, required_any, option, proc, block=nil)
+          unless block
+            block = Proc.new {|response| response.body}
+          end
+          method = :request
+          required ||= %w[api_key]
+          define_method(method_id) do |*args|
+            name = "#{category}/#{method_id.to_s}"
+            params = ApiMethods::Base.validator(required, required_any, option).call(
+              :required_any => proc.call(self),
+              :option => args.length > 0 ? args[0] : {})
+            block.call(send(method, http_method, name, params))
+          end
+        end
+
+        def option_method(id, option, &block)
+          unless block
+            block = Proc.new {|response| response.body}
+          end
+          required = %w[]
+          required_any = %w[]
+          method = :request
+          http_method = 'get'
+          define_method(id) do |*args|
+            name = "#{self.class.to_s.split('::')[-1].downcase}/#{id.to_s}"
+            block.call(send(method, http_method, name, ApiMethods::Base.validator(required, required_any, option).call(
+                  :option => args.length > 0 ? args[0] : {})))
+            
+          end
+        end
+
+        def validator(required, required_any, option)
+          Proc.new do |args|
+            ApiMethods::Base.build_params_with_validation(args, required, required_any, option)
+          end
+        end
+
+        def build_params_with_validation(args, required, required_any, option)
+          options = {}
+          # api_key is common parameter.
+          required -= %w[api_key]
+          required.each do |name|
+            name = name.to_sym
+            raise ArgumentError.new("%s is required" % name) unless args[:required][name]
+            options[name] = args[:required][name]
+          end
+          if required_any.length > 0
+            unless required_any.inject(false){|r,i| r || args[:required_any].include?(i.to_sym)}
+              raise ArgumentError.new("%s is required" % required_any.join(' or '))
+            end
+            key = required_any.find {|name| args[:required_any].include?(name.to_sym)}
+            options[key.to_sym] = args[:required_any][key.to_sym] if key
+          end
+          if args[:option]
+            option.each do |name|
+              name = name.to_sym
+              options[name] = args[:option][name]
+            end
+          end
+          options
+        end
       end
     end
 
@@ -131,6 +207,49 @@ module Echonest
           sleep 5
         end
       end
+    end
+
+    class Artist < Base
+      class << self
+        def new_from_name(echonest, artistname)
+          instance = new(echonest)
+          instance.artist_name = artistname
+          instance
+        end
+
+        def define_method_with_artist_id(method_id, option, &block)
+          required_any = %w[id name]
+          http_method = 'get'
+          proc = lambda {|s| s.artist_name ? {:name => s.artist_name} : {:id => s.artist_id} }
+          define_method_with_required_any('artist', method_id, http_method, [], required_any, option, proc, block)
+        end
+      end
+
+      attr_accessor :artist_name, :artist_id
+
+      define_method_with_artist_id(:audio, %w[format results start])
+      define_method_with_artist_id(:biographies, %w[format results start])
+      define_method_with_artist_id(:blogs, %w[format results start])
+      define_method_with_artist_id(:familiarity, %w[format results start])
+      define_method_with_artist_id(:hotttnesss, %w[format results start])
+      define_method_with_artist_id(:images, %w[format results start])
+      define_method_with_artist_id(:news, %w[format results start])
+      define_method_with_artist_id(:profile, %w[format results start])
+      define_method_with_artist_id(:reviews, %w[format results start])
+      option_method(:search, %w[format results bucket limit name description fuzzy_match max_familiarity min_familiarity max_hotttnesss min_hotttnesss sort])
+      define_method_with_artist_id(:songs, %w[format results start])
+      define_method_with_artist_id(:similar, %w[format results start bucket max_familiarity min_familiarity max_hotttnesss min_hotttnesss sort])
+      define_method_with_artist_id(:terms, %w[format sort])
+      option_method(:top_hottt, %w[format results start bucket limit])
+      option_method(:top_terms, %w[format results start bucket limit])
+      define_method_with_artist_id(:urls, %w[format sort])
+      define_method_with_artist_id(:video, %w[format sort])
+    end
+
+    class Song < Base
+      option_method(:search, %w[format title artist combined description artist_id results max_tempo min_tempo max_duration min_duration max_loudness min_loudness max_familiarity min_familiarity max_hotttnesss min_hotttnesss min_longitude max_longitude min_latitude max_latitude mode key bucket sort limitt])
+      define_method_with_required_any('song', :profile, 'get', %w[api_key id], [], %w[format bucket limit], lambda{})
+      option_method(:identify, %w[query code artist title release duration genre bucket])
     end
   end
 end
