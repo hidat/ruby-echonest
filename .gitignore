@@ -1,5 +1,5 @@
 pkg
 coverage
 *.gem
-example/
+/example*
 *~
