@@ -97,9 +97,18 @@ module Echonest
           required ||= %w[api_key]
           define_method(method_id) do |*args|
             name = "#{category}/#{method_id.to_s}"
+            if args.length > 0
+              param_required = {}
+              required.each do |k|
+                k = k.to_sym
+                param_required[k] = args[0].delete(k) if args[0][k]
+              end
+              param_option = args[0]
+            end
             params = ApiMethods::Base.validator(required, required_any, option).call(
+              :required => param_required,
               :required_any => proc.call(self),
-              :option => args.length > 0 ? args[0] : {})
+              :option => param_option)
             block.call(send(method, http_method, name, params))
           end
         end
@@ -142,7 +151,7 @@ module Echonest
             key = required_any.find {|name| args[:required_any].include?(name.to_sym)}
             options[key.to_sym] = args[:required_any][key.to_sym] if key
           end
-          unless args[:option].empty?
+          if args[:option] && !args[:option].empty?
             option.each do |name|
               name = name.to_sym
               options[name] = args[:option][name] if args[:option][name]
