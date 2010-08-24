@@ -111,7 +111,7 @@ module Echonest
           required = %w[]
           required_any = %w[]
           method = :request
-          http_method = 'get'
+          http_method = :get
           define_method(id) do |*args|
             name = "#{self.class.to_s.split('::')[-1].downcase}/#{id.to_s}"
             block.call(send(method, http_method, name, ApiMethods::Base.validator(required, required_any, option).call(
@@ -142,10 +142,10 @@ module Echonest
             key = required_any.find {|name| args[:required_any].include?(name.to_sym)}
             options[key.to_sym] = args[:required_any][key.to_sym] if key
           end
-          if args[:option]
+          unless args[:option].empty?
             option.each do |name|
               name = name.to_sym
-              options[name] = args[:option][name]
+              options[name] = args[:option][name] if args[:option][name]
             end
           end
           options
@@ -215,15 +215,15 @@ module Echonest
 
     class Artist < Base
       class << self
-        def new_from_name(echonest, artistname)
+        def new_from_name(echonest, artist_name)
           instance = new(echonest)
-          instance.artist_name = artistname
+          instance.artist_name = artist_name
           instance
         end
 
         def method_with_artist_id(method_id, option, &block)
           required_any = %w[id name]
-          http_method = 'get'
+          http_method = :get
           proc = lambda {|s| s.artist_name ? {:name => s.artist_name} : {:id => s.artist_id} }
           method_with_required_any('artist', method_id, http_method, [], required_any, option, proc, block)
         end
@@ -241,18 +241,18 @@ module Echonest
       method_with_artist_id(:profile, %w[format results start])
       method_with_artist_id(:reviews, %w[format results start])
       method_with_option(:search, %w[format results bucket limit name description fuzzy_match max_familiarity min_familiarity max_hotttnesss min_hotttnesss sort])
-      method_with_artist_id(:songs, %w[format results start])
-      method_with_artist_id(:similar, %w[format results start bucket max_familiarity min_familiarity max_hotttnesss min_hotttnesss sort])
+      method_with_artist_id(:songs, %w[format results bucket limit])
+      method_with_artist_id(:similar, %w[format results start bucket max_familiarity min_familiarity max_hotttnesss min_hotttnesss reverse limit])
       method_with_artist_id(:terms, %w[format sort])
-      method_with_option(:top_hottt, %w[format results start bucket limit])
-      method_with_option(:top_terms, %w[format results start bucket limit])
-      method_with_artist_id(:urls, %w[format sort])
-      method_with_artist_id(:video, %w[format sort])
+      method_with_option(:top_hottt, %w[format results start bucket limit type])
+      method_with_option(:top_terms, %w[format results])
+      method_with_artist_id(:urls, %w[format])
+      method_with_artist_id(:video, %w[format results start])
     end
 
     class Song < Base
       method_with_option(:search, %w[format title artist combined description artist_id results max_tempo min_tempo max_duration min_duration max_loudness min_loudness max_familiarity min_familiarity max_hotttnesss min_hotttnesss min_longitude max_longitude min_latitude max_latitude mode key bucket sort limitt])
-      method_with_required_any('song', :profile, 'get', %w[api_key id], [], %w[format bucket limit], lambda{})
+      method_with_required_any('song', :profile, :get, %w[api_key id], [], %w[format bucket limit], lambda{})
       method_with_option(:identify, %w[query code artist title release duration genre bucket])
     end
   end
