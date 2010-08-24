@@ -23,8 +23,12 @@ module Echonest
       ApiMethods::Track.new(self)
     end
 
-    def artist(name)
-      ApiMethods::Artist.new_from_name(self, name)
+    def artist(name=nil)
+      if name
+        ApiMethods::Artist.new_from_name(self, name)
+      else
+        ApiMethods::Artist.new(self)
+      end
     end
 
     def song

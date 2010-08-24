@@ -87,6 +87,28 @@ describe Echonest::Api do
     end
   end
 
+  describe '#artist' do
+    it 'should return artist methods' do
+      artist = @api.artist('Weezer')
+      artist.class.should eql(Echonest::ApiMethods::Artist)
+      artist.instance_eval {@api}.should eql(@api)
+    end
+
+    it 'should return artist methods even artist name was empty' do
+      artist = @api.artist
+      artist.class.should eql(Echonest::ApiMethods::Artist)
+      artist.instance_eval {@api}.should eql(@api)
+    end
+  end
+
+  describe '#song' do
+    it 'should return song methods' do
+      song = @api.song
+      song.class.should eql(Echonest::ApiMethods::Song)
+      song.instance_eval {@api}.should eql(@api)
+    end
+  end
+
   describe 'traditional API methods' do
     it 'should have traditional API methods' do
       filename = fixture('sample.mp3')
