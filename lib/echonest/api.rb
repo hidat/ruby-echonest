@@ -84,7 +84,7 @@ module Echonest
       end
 
       def request(*args)
-        http_method, name, params = args
+        name, http_method, params = args
         @api.request(name, http_method, params)
       end
 
@@ -96,7 +96,7 @@ module Echonest
           method = :request
           required ||= %w[api_key]
           define_method(method_id) do |*args|
-            name = "#{category}/#{method_id.to_s}"
+            name = "#{category.downcase}/#{method_id.to_s}"
             if args.length > 0
               param_required = {}
               required.each do |k|
@@ -109,7 +109,7 @@ module Echonest
               :required => param_required,
               :required_any => proc.call(self),
               :option => param_option)
-            block.call(send(method, http_method, name, params))
+            block.call(send(method, name, http_method, params))
           end
         end
 
@@ -123,7 +123,7 @@ module Echonest
           http_method = :get
           define_method(id) do |*args|
             name = "#{self.class.to_s.split('::')[-1].downcase}/#{id.to_s}"
-            block.call(send(method, http_method, name, ApiMethods::Base.validator(required, required_any, option).call(
+            block.call(send(method, name, http_method, ApiMethods::Base.validator(required, required_any, option).call(
                   :option => args.length > 0 ? args[0] : {})))
             
           end
