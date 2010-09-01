@@ -35,6 +35,10 @@ module Echonest
       ApiMethods::Song.new(self)
     end
 
+    def playlist
+      ApiMethods::Playlist.new(self)
+    end
+
     def default_params
       {
         :format => 'json',
@@ -49,11 +53,11 @@ module Echonest
 
     def build_params_to_list(params)
       result = []
-      hash_to_list = lambda{|kv| [URI.encode(kv[0].to_s), URI.encode(kv[1])]}
+      hash_to_list = lambda{|kv| [kv[0].to_s, kv[1]]}
       params.each do |param|
         if param.instance_of? Array
           param[1].map do |p1|
-            result << [URI.encode(param[0].to_s), URI.encode(p1)]
+            result << [param[0].to_s, p1]
           end
         else
           result << hash_to_list.call(params)
@@ -287,6 +291,11 @@ module Echonest
       method_with_option(:search, %w[format title artist combined description artist_id results max_tempo min_tempo max_duration min_duration max_loudness min_loudness max_familiarity min_familiarity max_hotttnesss min_hotttnesss min_longitude max_longitude min_latitude max_latitude mode key bucket sort limitt])
       method_with_required_any('song', :profile, :get, %w[api_key id], [], %w[format bucket limit], lambda{})
       method_with_option(:identify, %w[query code artist title release duration genre bucket])
+    end
+
+    class Playlist < Base
+      method_with_option(:static, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio])
+      method_with_option(:dynamic, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio session_id dmca rating chain_xspf])
     end
   end
 end

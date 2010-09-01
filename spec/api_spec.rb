@@ -117,6 +117,14 @@ describe Echonest::Api do
     end
   end
 
+  describe '#playlist' do
+    it 'should return playlist methods' do
+      playlist = @api.playlist
+      playlist.class.should eql(Echonest::ApiMethods::Playlist)
+      playlist.instance_eval {@api}.should eql(@api)
+    end
+  end
+
   describe 'traditional API methods' do
     it 'should have traditional API methods' do
       filename = fixture('sample.mp3')
