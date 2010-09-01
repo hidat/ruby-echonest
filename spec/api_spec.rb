@@ -22,15 +22,24 @@ describe Echonest::Api do
     params[:format].should eql('json')
   end
 
+  it "should build parameters to list" do
+    params = @api.build_params_to_list(:id => 'TRXXHTJ1294CD8F3B3')
+    params.length.should eql(3)
+    p params
+    params[0].should eql(['id', 'TRXXHTJ1294CD8F3B3'])
+    params.should be_include(['api_key', '8TPE3VC60ODJTNTFE'])
+    params.should be_include(['format', 'json'])
+  end
+
   it "should pass arguments to user agent" do
     @api.user_agent.should_receive(:get_content).
       with(
       URI('http://developer.echonest.com/api/v4/xxx/yyy'),
-      {
-        :foo => 'bar',
-        :api_key => '8TPE3VC60ODJTNTFE',
-        :format => 'json'
-      }).and_return(open(fixture('profile.json')).read)
+      [
+        ['foo', 'bar'],
+        ['api_key', '8TPE3VC60ODJTNTFE'],
+        ['format', 'json']
+      ]).and_return(open(fixture('profile.json')).read)
 
     @api.request('xxx/yyy', :get, :foo => 'bar')
   end

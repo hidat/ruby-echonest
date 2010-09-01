@@ -62,17 +62,22 @@ describe Echonest::ApiMethods::Song do
   describe_bundle_for_option('search', [
     {:format => 'json'},
     {:format => 'json', :title => 'foo'},
-    {:format => 'json', :title => 'foo', :sort => 'tempo-asc'}
+    {:format => 'json', :title => 'foo', :sort => 'tempo-asc'},
+    {:format => 'json', :results => 100, :bucket => 'audio_summary'},
+    {:format => 'json', :results => 100, :bucket => %w[audio_summary tracks song_hotttnesss]}
   ])
 
   describe_bundle_for_song('profile', [
     {:format => 'json'},
     {:format => 'json', :bucket => 'audio_summary'},
-    {:format => 'json', :bucket => 'audio_summary', :limit => 'true'}
+    {:format => 'json', :bucket => 'audio_summary', :limit => 'true'},
+    {:format => 'json', :bucket => %w[audio_summary tracks song_hotttnesss]}
   ])
 
   describe_bundle_for_option('identify', [
     {:code => '1234'},
-    {:code => '1234', :genre => 'pop'}
+    {:code => '1234', :genre => 'pop'},
+    {:code => '1234', :genre => 'pop', :bucket => 'audio_summary'},
+    {:code => '1234', :genre => 'pop', :bucket => %w[audio_summary tracks song_hotttnesss]}
   ])
 end

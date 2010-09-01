@@ -35,10 +35,34 @@ module Echonest
       ApiMethods::Song.new(self)
     end
 
+    def default_params
+      {
+        :format => 'json',
+        :api_key => @api_key
+      }
+    end
+
     def build_params(params)
       params = params.
-        merge(:format => 'json').
-        merge(:api_key => @api_key)
+        merge(default_params)
+    end
+
+    def build_params_to_list(params)
+      result = []
+      hash_to_list = lambda{|kv| [URI.encode(kv[0].to_s), URI.encode(kv[1])]}
+      params.each do |param|
+        if param.instance_of? Array
+          param[1].map do |p1|
+            result << [URI.encode(param[0].to_s), URI.encode(p1)]
+          end
+        else
+          result << hash_to_list.call(params)
+        end
+      end
+      default_params.each do |kv|
+        result << hash_to_list.call(kv) unless params.include? kv[0]
+      end
+      result
     end
 
     def request(name, method, params, file = nil)
@@ -63,7 +87,7 @@ module Echonest
         response_body = @user_agent.__send__(
           method.to_s + '_content',
           URI.join(BASE_URL, name.to_s),
-          build_params(params))
+          build_params_to_list(params))
       end
 
       response = Response.new(response_body)
@@ -241,13 +265,13 @@ module Echonest
       attr_accessor :artist_name, :artist_id
 
       method_with_artist_id(:audio, %w[format results start])
-      method_with_artist_id(:biographies, %w[format results start])
+      method_with_artist_id(:biographies, %w[format results start license])
       method_with_artist_id(:blogs, %w[format results start])
       method_with_artist_id(:familiarity, %w[format results start])
       method_with_artist_id(:hotttnesss, %w[format results start])
-      method_with_artist_id(:images, %w[format results start])
+      method_with_artist_id(:images, %w[format results start license])
       method_with_artist_id(:news, %w[format results start])
-      method_with_artist_id(:profile, %w[format results start])
+      method_with_artist_id(:profile, %w[format results start bucket])
       method_with_artist_id(:reviews, %w[format results start])
       method_with_option(:search, %w[format results bucket limit name description fuzzy_match max_familiarity min_familiarity max_hotttnesss min_hotttnesss sort])
       method_with_artist_id(:songs, %w[format results bucket limit])

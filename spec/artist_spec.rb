@@ -80,7 +80,10 @@ describe Echonest::ApiMethods::Artist do
   describe_bundle_for_artist('biographies', [
     {:format => 'json'},
     {:format => 'json', :results => 100},
-    {:format => 'json', :results => 100, :start => 20}
+    {:format => 'json', :results => 100, :start => 20},
+
+    {:format => 'json', :results => 100, :start => 20, :license => 'echo-source'},
+    {:format => 'json', :results => 100, :start => 20, :license => ['echo-source', 'cc-by-nc']}
   ])
 
   describe_bundle_for_artist('blogs', [
@@ -104,7 +107,9 @@ describe Echonest::ApiMethods::Artist do
   describe_bundle_for_artist('images', [
     {:format => 'json'},
     {:format => 'json', :results => 100},
-    {:format => 'json', :results => 100, :start => 20}
+    {:format => 'json', :results => 100, :start => 20},
+    {:format => 'json', :results => 100, :start => 20, :license => 'echo-source'},
+    {:format => 'json', :results => 100, :start => 20, :license => ['echo-source', 'cc-by-nc']}
   ])
 
   describe_bundle_for_artist('news', [
@@ -116,7 +121,9 @@ describe Echonest::ApiMethods::Artist do
   describe_bundle_for_artist('profile', [
     {:format => 'json'},
     {:format => 'json', :results => 100},
-    {:format => 'json', :results => 100, :start => 20}
+    {:format => 'json', :results => 100, :start => 20},
+    {:format => 'json', :results => 100, :start => 20, :bucket => 'audio'},
+    {:format => 'json', :results => 100, :start => 20, :bucket => ['audio', 'video']}
   ])
 
   describe_bundle_for_artist('reviews', [
@@ -128,19 +135,23 @@ describe Echonest::ApiMethods::Artist do
   describe_bundle_for_option('search', [
     {:format => 'json'},
     {:format => 'json', :results => 100},
-    {:format => 'json', :results => 100, :bucket => 'audio,biographies,blogs,id:musicbrainz'}
+    {:format => 'json', :results => 100, :bucket => 'audio'},
+    {:format => 'json', :results => 100, :bucket => %w[audio biographies blogs id:musicbrainz]}
   ])
 
   describe_bundle_for_artist('songs', [
     {:format => 'json'},
     {:format => 'json', :results => 100},
-    {:format => 'json', :results => 100, :bucket => 'audio,biographies,blogs,id:musicbrainz'}
+    {:format => 'json', :results => 100, :bucket => 'audio'},
+    {:format => 'json', :results => 100, :bucket => %w[audio biographies blogs id:musicbrainz]}
   ])
 
   describe_bundle_for_artist('similar', [
     {:format => 'json'},
     {:format => 'json', :results => 100},
-    {:format => 'json', :results => 100, :max_familiarity => 0.9}
+    {:format => 'json', :results => 100, :max_familiarity => 0.9},
+    {:format => 'json', :results => 100, :bucket => 'audio'},
+    {:format => 'json', :results => 100, :bucket => %w[audio biographies blogs id:musicbrainz]}
   ])
 
   describe_bundle_for_artist('terms', [
@@ -151,7 +162,9 @@ describe Echonest::ApiMethods::Artist do
   describe_bundle_for_option('top_hottt', [
     {:format => 'json'},
     {:format => 'json', :results => 100},
-    {:format => 'json', :results => 100, :type => 'normal'}
+    {:format => 'json', :results => 100, :type => 'normal'},
+    {:format => 'json', :results => 100, :bucket => 'audio'},
+    {:format => 'json', :results => 100, :bucket => %w[audio biographies blogs id:musicbrainz]}
   ])
 
   describe_bundle_for_option('top_terms', [
