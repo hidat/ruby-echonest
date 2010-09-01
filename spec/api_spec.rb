@@ -25,7 +25,6 @@ describe Echonest::Api do
   it "should build parameters to list" do
     params = @api.build_params_to_list(:id => 'TRXXHTJ1294CD8F3B3')
     params.length.should eql(3)
-    p params
     params[0].should eql(['id', 'TRXXHTJ1294CD8F3B3'])
     params.should be_include(['api_key', '8TPE3VC60ODJTNTFE'])
     params.should be_include(['format', 'json'])
