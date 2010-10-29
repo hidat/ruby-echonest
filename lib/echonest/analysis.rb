@@ -3,6 +3,8 @@ require 'open-uri'
 
 module Echonest
   class Analysis
+    CHROMATIC = %w(C C# D D# E F F# G G# A A# B).freeze
+    
     def initialize(json)
       @body = JSON.parse(json)
     end
@@ -10,7 +12,7 @@ module Echonest
     def self.new_from_url(url)
       new(open(url).read)
     end
-
+    
     def tempo
       track_info['tempo']
     end
@@ -26,6 +28,11 @@ module Echonest
     def key
       track_info['key']
     end
+    
+    # Returns the corresponding letter for the key number value.
+    def key_letter
+      CHROMATIC[key]
+    end
 
     def loudness
       track_info['loudness']
@@ -33,6 +40,14 @@ module Echonest
 
     def mode
       track_info['mode']
+    end
+    
+    def minor?
+      mode == 0
+    end
+
+    def major?
+      !minor?
     end
 
     def start_of_fade_out

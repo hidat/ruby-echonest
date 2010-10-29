@@ -14,15 +14,15 @@ $LOAD_PATH.unshift "lib"
 require "echonest"
 
 NAME              = "ruby-echonest"
-AUTHOR            = "youpy"
-EMAIL             = "youpy@buycheapviagraonlinenow.com"
+AUTHOR            = "bassnode"
+EMAIL             = "bassnode@gmail.com"
 DESCRIPTION       = "An Ruby interface for Echo Nest Developer API"
 RUBYFORGE_PROJECT = "ruby-echonest"
-HOMEPATH          = "http://github.com/youpy/ruby-echonest"
+HOMEPATH          = "http://github.com/bassnode/ruby-echonest"
 BIN_FILES         = %w(  )
 VERS              = Echonest::VERSION
 
-REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
+
 CLEAN.include ['**/.*.sw?', '*.gem', '.config']
 RDOC_OPTS = [
   '--title', "#{NAME} documentation",

@@ -75,12 +75,24 @@ describe Echonest::Analysis do
     @analysis.key.should eql(7)
   end
 
+  it "should derive key letter from key" do
+    @analysis.key_letter.should eql(Echonest::Analysis::CHROMATIC[7])
+  end
+  
   it "should have loudness" do
     @analysis.loudness.should eql(-19.140)
   end
 
   it "should have mode" do
     @analysis.mode.should eql(1)
+  end
+
+  it "should derive major? from mode" do
+    @analysis.major?.should eql(true)
+  end
+
+  it "should derive minor? from mode" do
+    @analysis.minor?.should eql(false)
   end
 
   it "should have time signature" do

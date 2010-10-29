@@ -4,6 +4,7 @@ require 'json'
 
 module Echonest
   class Api
+    VERSION = '4.2'
     BASE_URL = 'http://developer.echonest.com/api/v4/'
     USER_AGENT = '%s/%s' % ['ruby-echonest', ::Echonest::VERSION]
 
@@ -207,7 +208,7 @@ module Echonest
 
         if options.has_key?(:filename)
           filename = options.delete(:filename)
-          filetype = filename.to_s.match(/\.(mp3|au|ogg)$/)[1]
+          filetype = filename.match(/\.(mp3|au|ogg)$/)[1]
 
           open(filename) do |f|
             @api.request('track/upload',
@@ -229,8 +230,16 @@ module Echonest
         md5 = Digest::MD5.hexdigest(open(filename).read)
 
         while true
-          response = profile(:md5 => md5)
-
+          begin
+            response = profile(:md5 => md5)
+          rescue Api::Error => e
+            if e.message =~ /^The Identifier specified does not exist/
+             response = upload(:filename => filename)
+           else
+             raise
+           end
+         end
+           
           case response.body.track.status
           when 'unknown'
             upload(:filename => filename)
