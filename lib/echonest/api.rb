@@ -1,6 +1,8 @@
 require 'digest/md5'
 require 'httpclient'
 require 'json'
+# For streaming output
+STDOUT.sync = true
 
 module Echonest
   class Api
@@ -17,6 +19,7 @@ module Echonest
     def initialize(api_key)
       @api_key = api_key
       @user_agent = HTTPClient.new(:agent_name => USER_AGENT)
+      @user_agent.send_timeout = 60 * 20 # for big files
     end
 
     def track
@@ -80,13 +83,22 @@ module Echonest
         uri = URI.join(BASE_URL, name.to_s)
         uri.query = query
 
-        response_body = @user_agent.__send__(
-          method.to_s + '_content',
+        connection = @user_agent.__send__(
+          method.to_s + '_async',
           uri,
           file.read,
           {
             'Content-Type' => 'application/octet-stream'
           })
+
+          # Show some feedback for big ole' POSTs
+          while true
+            break if connection.finished?
+            print '.'
+            sleep 2
+          end
+          res = connection.pop
+          response_body = res.content.read
       else
         response_body = @user_agent.__send__(
           method.to_s + '_content',
