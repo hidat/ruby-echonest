@@ -73,6 +73,7 @@ module Echonest
     end
 
     def request(name, method, params, file = nil)
+      uri = URI.join(BASE_URL, name.to_s)
       if file
         query = build_params(params).sort_by do |param|
           param[0].to_s
@@ -80,13 +81,12 @@ module Echonest
           m << [URI.encode(param[0].to_s), URI.encode(param[1])].join('=')
         end.join('&')
 
-        uri = URI.join(BASE_URL, name.to_s)
         uri.query = query
-
+        file = file.read unless file.is_a?(String)
         connection = @user_agent.__send__(
           method.to_s + '_async',
           uri,
-          file.read,
+          file,
           {
             'Content-Type' => 'application/octet-stream'
           })
@@ -102,7 +102,7 @@ module Echonest
       else
         response_body = @user_agent.__send__(
           method.to_s + '_content',
-          URI.join(BASE_URL, name.to_s),
+          uri,
           build_params_to_list(params))
       end
 
@@ -165,7 +165,7 @@ module Echonest
             name = "#{self.class.to_s.split('::')[-1].downcase}/#{id.to_s}"
             block.call(send(method, name, http_method, ApiMethods::Base.validator(required, required_any, option).call(
                   :option => args.length > 0 ? args[0] : {})))
-            
+
           end
         end
 
@@ -251,7 +251,7 @@ module Echonest
              raise
            end
          end
-           
+
           case response.body.track.status
           when 'unknown'
             upload(:filename => filename)
@@ -310,7 +310,11 @@ module Echonest
     class Song < Base
       method_with_option(:search, %w[format title artist combined description artist_id results max_tempo min_tempo max_duration min_duration max_loudness min_loudness max_familiarity min_familiarity max_hotttnesss min_hotttnesss min_longitude max_longitude min_latitude max_latitude mode key bucket sort limitt])
       method_with_required_any('song', :profile, :get, %w[api_key id], [], %w[format bucket limit], lambda{})
-      method_with_option(:identify, %w[query code artist title release duration genre bucket])
+      # method_with_option(:identify, %w[query code artist title release duration genre bucket])
+      def identify(opts)
+        file = opts.delete(:code)
+        @api.request('song/identify', :post, opts, file).body
+      end
     end
 
     class Playlist < Base
