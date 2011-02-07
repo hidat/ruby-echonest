@@ -19,7 +19,9 @@ module Echonest
     def initialize(api_key)
       @api_key = api_key
       @user_agent = HTTPClient.new(:agent_name => USER_AGENT)
-      @user_agent.send_timeout = 60 * 20 # for big files
+      # for big files
+      @user_agent.send_timeout = 60 * 30
+      @user_agent.receive_timeout = 60 * 10
     end
 
     def track
@@ -92,11 +94,14 @@ module Echonest
           })
 
           # Show some feedback for big ole' POSTs
-          while true
-            break if connection.finished?
-            print '.'
+          n=0
+          print "8"
+          begin
             sleep 2
-          end
+            n+=2
+            print (n%6==0 ? "D 8" : "=")
+          end while !connection.finished?
+
           res = connection.pop
           response_body = res.content.read
       else
