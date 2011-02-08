@@ -43,7 +43,8 @@ describe Echonest::Api do
     file = open(fixture('sample.mp3'))
     file.should_receive(:read).and_return('content')
 
-    @api.user_agent.should_receive(:post_content).
+
+    @api.user_agent.should_receive(:post_async).
       with(
       URI('http://developer.echonest.com/api/v4/xxx/zzz?api_key=8TPE3VC60ODJTNTFE&bar=baz&format=json'),
       'content',

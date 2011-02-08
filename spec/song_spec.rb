@@ -74,10 +74,18 @@ describe Echonest::ApiMethods::Song do
     {:format => 'json', :bucket => %w[audio_summary tracks song_hotttnesss]}
   ])
 
-  describe_bundle_for_option('identify', [
-    {:code => '1234'},
-    {:code => '1234', :genre => 'pop'},
-    {:code => '1234', :genre => 'pop', :bucket => 'audio_summary'},
-    {:code => '1234', :genre => 'pop', :bucket => %w[audio_summary tracks song_hotttnesss]}
-  ])
+  # describe_bundle_for_option('identify', [
+    # {:code => '1234'},
+    # {:code => '1234', :genre => 'pop'},
+    # {:code => '1234', :genre => 'pop', :bucket => 'audio_summary'},
+    # {:code => '1234', :genre => 'pop', :bucket => %w[audio_summary tracks song_hotttnesss]}
+  # ])
+
+  describe "identify" do
+    it "should request to song/identify with option" do
+      @api.should_receive(:request).with("song/identify", :post, {}, nil).and_return{ Echonest::Response.new('{"hello":"world"}') }
+      @song.identify({})
+    end
+
+  end
 end
