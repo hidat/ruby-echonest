@@ -36,6 +36,10 @@ module Echonest
       end
     end
 
+    def catalog
+      ApiMethods::Catalog.new(self)
+    end
+
     def song
       ApiMethods::Song.new(self)
     end
@@ -325,6 +329,16 @@ module Echonest
     class Playlist < Base
       method_with_option(:static, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio])
       method_with_option(:dynamic, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio session_id dmca rating chain_xspf])
+    end
+    
+    class Catalog < Base
+      def create(name, type="artist")
+        @api.request('catalog/create', :post, {:name => name, :type => type, :format => "json"}).body
+      end
+      
+      def update(catalog_id, json_data) # json_data: [{:item=>{:item_id => "hogehoge", :artist_name => "Oscar Peterson"}}].to_json
+        @api.request('catalog/update', :post, {:id => catalog_id, :data_type => "json", :format => "json", :data => json_data}).body
+      end
     end
   end
 end
