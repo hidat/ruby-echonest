@@ -3,8 +3,8 @@ require 'rake'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rake/packagetask'
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
+require 'rubygems/package_task'
+require 'rdoc/task'
 require 'rake/contrib/sshpublisher'
 require 'spec/rake/spectask'
 require 'fileutils'
@@ -24,7 +24,7 @@ Spec::Rake::SpecTask.new do |t|
 end
 
 spec = eval(File.read("bassnode-ruby-echonest.gemspec"))
-Rake::GemPackageTask.new(spec) do |p|
+Gem::PackageTask.new(spec) do |p|
   p.need_tar = true
   p.gem_spec = spec
 end
