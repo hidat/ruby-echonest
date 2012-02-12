@@ -41,5 +41,4 @@ Only supports the API for Track http://developer.echonest.com/docs/v4/track.html
 == Copyright
 
 Author::    youpy <youpy@buycheapviagraonlinenow.com>
-Copyright:: Copyright (c) 2009 youpy
 License::   MIT

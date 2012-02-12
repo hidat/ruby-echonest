@@ -35,7 +35,3 @@ task :debug_gem do
   puts spec.to_ruby
 end
 
-desc "Load an IRB session with Echonest assigned to en"
-task :console do
-  exec "ruby console"
-end
