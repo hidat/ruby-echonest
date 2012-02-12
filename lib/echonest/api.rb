@@ -65,7 +65,7 @@ module Echonest
       hash_to_list = lambda{|kv| [kv[0].to_s, kv[1]]}
       params.each do |param|
         if param.instance_of? Array
-          param[1].map do |p1|
+          Array(param[1]).map do |p1|
             result << [param[0].to_s, p1]
           end
         else
@@ -109,6 +109,8 @@ module Echonest
           res = connection.pop
           response_body = res.content.read
       else
+        Echonest.debug "#{method.to_s.upcase} #{uri}?#{build_params_to_list(params).inject(''){ |str, (key,val)| str << "#{key}=#{val}&"; str }}"
+
         response_body = @user_agent.__send__(
           method.to_s + '_content',
           uri,
@@ -330,15 +332,44 @@ module Echonest
       method_with_option(:static, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio])
       method_with_option(:dynamic, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio session_id dmca rating chain_xspf])
     end
-    
+
+    # http://developer.echonest.com/docs/v4/catalog.html
     class Catalog < Base
+      # type can be 'song' or 'artist' (Default)
       def create(name, type="artist")
         @api.request('catalog/create', :post, {:name => name, :type => type, :format => "json"}).body
       end
-      
-      def update(catalog_id, json_data) # json_data: [{:item=>{:item_id => "hogehoge", :artist_name => "Oscar Peterson"}}].to_json
+
+      # Updates (adds or deletes) items from a catalog. The body of the post should include an item block that describes modifications to the catalog.
+      # data: [{:item=>{:item_id => "hogehoge", :artist_name => "Oscar Peterson"}}]
+      def update(catalog_id, data)
+        json_data = data.to_json
         @api.request('catalog/update', :post, {:id => catalog_id, :data_type => "json", :format => "json", :data => json_data}).body
       end
+
+      # Checks the status of a catalog update.
+      method_with_option(:status, %w[format ticket])
+
+      # Get basic information on a catalog
+      method_with_option(:profile, %w[format id name])
+
+      # Returns data stored in the catalog. Also returns Echo Nest IDs for items that have been resolved to Echo Nest IDs
+      # along with information requested via bucket. If item_id is not set, all items (subject to the limits of the start and results parameters)
+      # are returned, otherwise, only the items explicitly specified by item_id are returned.
+      method_with_option(:read, %w[format id name item_id bucket results start])
+
+      # Returns feeds based on the artists in a taste profile. Unlike catalog/read method, the catalog/feed method interleaves items and sorts them by date.
+      # since: YYYY-mm-dd
+      # high_relevance: boolean (default false)
+      # bucket: news, blogs, reviews, audio and video blogs. If omitted defaults to news.
+      # result: default of 25
+      method_with_option(:feed, %w[format id bucket results start since high_relevance])
+
+      # Deletes the entire catalog. Only the API key used to create a catalog can be used to delete that catalog.
+      method_with_required_any('catalog', :delete, :post, %w[id], [], %w[format], lambda{})
+
+      # Returns a list of all catalogs created with the current key (account)
+      method_with_option(:list, %w[format results start])
     end
   end
 end

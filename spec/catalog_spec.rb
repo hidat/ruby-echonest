@@ -23,10 +23,10 @@ describe Echonest::ApiMethods::Catalog do
   describe "#update" do
     it "should request to catalog/update with option" do
       catalog_id = "catalog_id"
-      json_data = [{:item=>{:item_id => "hogehoge", :artist_name => "Oscar Peterson"}}].to_json
-      @api.should_receive(:request).with("catalog/update", :post, {:id => catalog_id, :data_type => "json", :format => "json", :data => json_data}).and_return{ Echonest::Response.new('{"hello":"world"}') }
-      @catalog.update(catalog_id, json_data)
+      data = [{:item=>{:item_id => "hogehoge", :artist_name => "Oscar Peterson"}}]
+      @api.should_receive(:request).with("catalog/update", :post, {:id => catalog_id, :data_type => "json", :format => "json", :data => data.to_json}).and_return{ Echonest::Response.new('{"hello":"world"}') }
+      @catalog.update(catalog_id, data)
     end
   end
-  
+
 end

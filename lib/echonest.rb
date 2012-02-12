@@ -13,4 +13,20 @@ require 'echonest/element/tatum'
 def Echonest(api_key) Echonest::Api.new(api_key) end
 
 module Echonest
+  extend self
+
+  def debug(obj)
+    return unless debug?
+
+    if obj.is_a?(String)
+      puts obj
+    else
+      puts obj.inspect
+    end
+  end
+
+  # MOAR DEBUGGING! *just for now
+  def debug?
+    true || ENV['DEBUG']
+  end
 end
