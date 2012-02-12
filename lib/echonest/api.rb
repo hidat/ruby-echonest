@@ -329,8 +329,21 @@ module Echonest
     end
 
     class Playlist < Base
-      method_with_option(:static, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio])
-      method_with_option(:dynamic, %w[format type artist_pick variety artist_id artist song_id description results max_tempo min_tempo max_duration min_duration max_loudness min_loudness artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss song_max_hotttnesss song_min_hotttnesss artist_min_longitude aritst_max_longitude artist_min_latitude arist_max_latitude mode key bucket sort limit audio session_id dmca rating chain_xspf])
+      @basic_parameters = %w[ format type artist_id artist song_id track_id results bucket limit dmca]
+
+      @static_parameters = %w[  artist_pick variety distribution adventurousness
+                                seed_catalog description style mood
+                                max_tempo min_tempo max_duration min_duration max_loudness min_loudness max_danceability min_danceability
+                                max_energy min_energy artist_max_familiarity artist_min_familiarity artist_max_hotttnesss artist_min_hotttnesss
+                                artist_start_year_before artist_start_year_after artist_end_year_before artist_end_year_after song_max_hotttnesss song_min_hotttnesss
+                                min_longitude max_longitude min_latitude max_latitude mode key sort ] + @basic_parameters
+
+      @dynamic_parameters = %w[ session_id dmca adventurousness rating chain_xspf
+                                steer steer_description steer_style steer_mood ] + @static_parameters
+
+      method_with_option(:basic,  @basic_parameters)
+      method_with_option(:static,  @static_parameters)
+      method_with_option(:dynamic, @dynamic_parameters)
     end
 
     # http://developer.echonest.com/docs/v4/catalog.html
