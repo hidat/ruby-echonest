@@ -320,7 +320,7 @@ module Echonest
 
     class Song < Base
       method_with_option(:search, %w[format title artist combined description artist_id results max_tempo min_tempo max_duration min_duration max_loudness min_loudness max_familiarity min_familiarity max_hotttnesss min_hotttnesss min_longitude max_longitude min_latitude max_latitude mode key bucket sort limitt])
-      method_with_required_any('song', :profile, :get, %w[api_key id], [], %w[format bucket limit], lambda{})
+      method_with_required_any('song', :profile, :get, %w[api_key id], [], %w[format bucket limit], lambda{|s|})
       # method_with_option(:identify, %w[query code artist title release duration genre bucket])
       def identify(opts)
         file = opts.delete(:code)
