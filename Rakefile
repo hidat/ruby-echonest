@@ -23,7 +23,7 @@ Spec::Rake::SpecTask.new do |t|
   t.rcov = true
 end
 
-spec = eval(File.read("bassnode-ruby-echonest.gemspec"))
+spec = eval(File.read("hidat-ruby-echonest.gemspec"))
 Gem::PackageTask.new(spec) do |p|
   p.need_tar = true
   p.gem_spec = spec

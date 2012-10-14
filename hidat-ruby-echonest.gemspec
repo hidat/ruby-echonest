@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{bassnode-ruby-echonest}
+  s.name = %q{hidat-ruby-echonest}
   s.version = "0.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description = %q{An Ruby interface for Echo Nest Developer API}
   s.summary = %q{An Ruby interface for Echo Nest Developer API}
   s.email = %q{youpy@buycheapviagraonlinenow.com}
-  s.homepage = %q{http://github.com/bassnode/ruby-echonest}
+  s.homepage = %q{http://github.com/hidat/ruby-echonest}
   s.rubyforge_project = %q{bassnode-ruby-echonest}
   s.rubygems_version = %q{1.3.6}
   s.platform = Gem::Platform::RUBY
