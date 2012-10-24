@@ -314,6 +314,7 @@ module Echonest
       method_with_artist_id(:terms, %w[format sort])
       method_with_option(:top_hottt, %w[format results start bucket limit type])
       method_with_option(:top_terms, %w[format results])
+      method_with_option(:list_terms, %w[format type results])
       method_with_artist_id(:urls, %w[format])
       method_with_artist_id(:video, %w[format results start])
     end

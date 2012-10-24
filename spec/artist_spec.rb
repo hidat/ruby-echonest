@@ -172,6 +172,13 @@ describe Echonest::ApiMethods::Artist do
     {:format => 'json', :results => 100}
   ])
 
+  describe_bundle_for_option('list_terms', [
+    {:format => 'json'},
+    {:format => 'json', :type=>:style},
+    {:format => 'json', :type=>:mood},
+    {:format => 'json', :results => 100}
+  ])
+
   describe_bundle_for_artist('urls', [
     {:format => 'json'}
   ])

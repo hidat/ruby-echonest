@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["youpy", "bassnode"]
-  s.date = %q{2012-02-12}
+  s.date = %q{2012-10-23}
   s.description = %q{An Ruby interface for Echo Nest Developer API}
   s.summary = %q{An Ruby interface for Echo Nest Developer API}
   s.email = %q{youpy@buycheapviagraonlinenow.com}
